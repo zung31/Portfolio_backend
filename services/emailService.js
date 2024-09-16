@@ -4,6 +4,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '../var_env.env') })
 
 const email = process.env.GMAIL;
 const password = process.env.PASS;
+const destination = process.env.DESTINATION;
 
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com", 
@@ -18,7 +19,7 @@ const transporter = nodemailer.createTransport({
 exports.sendEmail = async (htmlToSend, subjectToSent) => {
     const mailOptions = {
         from: email, 
-        to: "kali.societe@gmail.com",  
+        to: destination,  
         subject: subjectToSent, 
         html: htmlToSend 
     };
