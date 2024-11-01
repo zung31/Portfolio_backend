@@ -1,10 +1,81 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Home</title>
-    </head>
-    <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script>
+        async function updateCheckbox(feedbackId, checkboxValue) {
+            try {
+                const response = await fetch(`/api/feedback/${feedbackId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ checkbox: checkboxValue })
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to update checkbox');
+                }
+            } catch (error) {
+                console.error('Error updating checkbox:', error);
+            }
+        }
+
+        function filterFeedbacks(filter) {
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const checkbox = row.querySelector('input[type="checkbox"]');
+                if (filter === 'all') {
+                    row.style.display = '';
+                } else if (filter === 'fixed' && checkbox.checked) {
+                    row.style.display = '';
+                } else if (filter === 'unfixed' && !checkbox.checked) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
         <h1>Home</h1>
         <p>Welcome to the home page!</p>
-    </body>
+        <h1 class="mt-5">Feedbacks</h1>
+        <div class="btn-group mb-3" role="group" aria-label="Filter feedbacks">
+            <button type="button" class="btn btn-primary" onclick="filterFeedbacks('all')">All</button>
+            <button type="button" class="btn btn-success" onclick="filterFeedbacks('fixed')">Fixed</button>
+            <button type="button" class="btn btn-warning" onclick="filterFeedbacks('unfixed')">Unfixed</button>
+        </div>
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Bot Message</th>
+                    <th>User Message</th>
+                    <th>Language</th>
+                    <th>Feedback</th>
+                    <th>Fixed</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% feedbacks.forEach(feedback => { %>
+                    <tr>
+                        <td><%= feedback.botMessage %></td>
+                        <td><%= feedback.userMessage %></td>
+                        <td><%= feedback.language %></td>
+                        <td><%= feedback.feedback %></td>
+                        <td>
+                            <input type="checkbox" <%= feedback.checkbox ? 'checked' : '' %> onchange="updateCheckbox('<%= feedback._id %>', this.checked)">
+                        </td>
+                        <td><%= feedback.createdAt.toLocaleString() %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</body>
 </html>

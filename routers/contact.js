@@ -8,9 +8,9 @@ router.use(cors());
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
-router.get("/", (req, res) => {
-    res.render('index')
-})
+// router.get("/", (req, res) => {
+//     res.render('index')
+// })
 
 router.post("/", authToken.authenticateToken, contactController.contact)
 
